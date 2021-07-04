@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!-- index.php !-->
+<html>
+
+<head>
+    <title>CRUD Operation</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+
+<body>
+    <div ng-app="myapp" ng-controller="usercontroller" style="margin-top: 60px;">
+        <h2 align="center" style="margin-bottom: 60px;">Group Divisions</h2>
+        <div class="container-fluid" style="display: inline-flex; width: 100%;">
+            <table class="table table-bordered" style="width: 50%; margin-left: 30px;">
+                <tr>
+                    <th>Group1</th>
+                </tr>
+                <tr ng-repeat="x in group1Users">
+                    <td>{{x.firstName}} {{x.lastName}}</td>
+                </tr>
+            </table>
+            <table class="table table-bordered" style="width: 50%; margin-right: 30px;">
+                <tr>
+                    <th>Group2</th>
+                </tr>
+                <tr ng-repeat="x2 in group2Users">
+                    <td>{{x2.firstName}} {{x2.lastName}}</td>
+                </tr>
+            </table>
+        </div>
+        <a href="test.html" name="btnBack" class="btn btn-info" style=" margin-left: 40px;">Back</a>
+    </div>
+</body>
+
+<script>
+    var app = angular.module("myapp", []);
+    app.controller("usercontroller", function ($scope, $http) {
+
+        $http.get('fetch_group.php').then(function (response) {
+            $scope.group1Users = response.data;
+        });
+
+        $http.get('fetch_group2.php').then(function (response) {
+            $scope.group2Users = response.data;
+        });
+    });
+</script>
+
+</html>

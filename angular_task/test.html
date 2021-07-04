@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!-- index.php !-->
+<html>
+
+<head>
+    <title>CRUD Operation</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+</head>
+
+<body>
+    <br /><br />
+    <div class="container" style="width:500px;">
+        <h2 align="center">CRUD Operation</h2>
+        <div ng-app="myapp" ng-controller="usercontroller">
+            
+            <form method="post" action="userInsert.php">
+                <label>First Name</label>
+                <input type="text" name="firstName" ng-model="firstName" class="form-control" />
+                <br />
+                <label>Last Name</label>
+                <input type="text" name="lastName" ng-model="lastName" class="form-control" />
+                <br />
+                <label>Email</label>
+                <input type="text" name="email" ng-model="email" class="form-control" />
+                <br />
+                <label>Group</label>
+                <select name="group_id" ng-model="group_id" class="form-control">  
+                    <!-- <option value="">Select group</option>   -->
+                    <option ng-repeat="group in groups" value="{{group.id}}">{{group.name}}</option>  
+               </select>  
+                <br />
+                <!-- <input type="submit" name="btnInsert" class="btn btn-info" ng-click="InsertData()" value="Insert User" /> -->
+                <input type="submit" name="btnInsert" class="btn btn-info" value="Insert User" align="center" />
+            </form>
+            
+            <a href="groups.html" name="btnCheckGroups" class="btn btn-info"  style="margin-left: 77%; margin-top: -55px;">Check Users</a>
+
+            <br /><br />
+            <table class="table table-bordered">
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                </tr>
+                <tr ng-repeat="x in names">
+                    <td>{{$index + 1}}</td>
+                    <td>{{x.firstName}}</td>
+                    <td>{{x.lastName}}</td>
+                    <td>{{x.email}}</td>
+                    <td><button ng-click="fetchSingleData(x.id)" type="button" class="btn btn-xs btn-primary">Edit</button></td>
+                    <td><button type="button" ng-click="deleteData(x.id)" class="btn btn-danger btn-xs">Delete</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+
+<script>
+    var app = angular.module("myapp", []);
+    app.controller("usercontroller", function ($scope, $http) {
+
+        $http.get('fetch_data.php').then(function (response) {
+            $scope.names = response.data;;
+        });
+
+        $http.get("load_group.php").then(function(response){  
+            $scope.groups = response.data;
+        });
+
+        $scope.fetchSingleData = function (id) {
+            console.log("fetch");
+            $http({
+                method: "POST",
+                url: "editUser.php",
+                data: { 'ids': id }
+            }, window.location.href = "editUser.php").success(function (data) {
+                $scope.firstName = data.firstName;
+                $scope.lastName = data.lastName;
+                $scope.email = data.email;
+                console.log($scope.firstName, $scope.lastName, $scope.email);
+            });
+        };
+
+        $scope.deleteData = function (id) {
+            if (confirm("Are you sure you want to remove it?")) {
+                $http({
+                    method: "POST",
+                    url: "insertData.php",
+                    data: { 'id': id, 'action': 'Delete' }
+                }).then(function (data) {
+                    $scope.success = true;
+                    $scope.error = false;
+                    $scope.successMessage = data.message;
+                });
+            }
+        };
+    });
+</script>
+
+</html>
